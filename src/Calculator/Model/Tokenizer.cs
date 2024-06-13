@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Calculator.Model.Enums;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
@@ -7,99 +8,10 @@ using System.Threading.Tasks;
 
 namespace Calculator.Model
 {
-    internal static class Tokenizer
+    public static class Tokenizer
     {
-
-        static private string RemoveSpaces(string str)
+        private static void FinishNumber(ref List<Token> tokens, ref string tempNumber, ref bool isPointUsed, ref bool isSucceed)
         {
-            string res = "";
-
-            foreach (char s in str)
-            {
-                if (s != ' ')
-                {
-                    res += s;
-                }
-            }
-
-            return res;
-        }
-
-        public static List<Token> ConvertStringToTokens(string str)
-        {
-            List<Token> res = new List<Token>();
-            bool isSucceed = true;
-            RemoveSpaces(str);
-
-            string tempNumber = "";
-            bool isPointUsed = false;
-
-            foreach (char s in str)
-            {
-                if ( ((s >= '0') && (s <= '9')) || (s == '.'))
-                {
-                    if (s == '.')
-                    {
-                        if ((!isPointUsed) && (tempNumber.Length>0))
-                        {
-                            tempNumber += s;
-                            isPointUsed = true;
-                        }
-                        else
-                        {
-                            isSucceed = false;
-                        }
-                    }
-                    else
-                    {
-                        tempNumber += s;
-                    }
-                }
-                else
-                {
-                    if ((tempNumber.Length > 0) && (tempNumber[tempNumber.Length - 1] == '.'))
-                    {
-                        isSucceed = false;
-                    }
-
-                    if (tempNumber.Length > 0)
-                    {
-                        res.Add(new Token(TokenType.NUBMER, tempNumber, float.Parse(tempNumber, CultureInfo.InvariantCulture)));
-                        tempNumber = "";
-                        isPointUsed = false;
-                    }
-
-                    switch (s) 
-                    {
-                        case '+':
-                            res.Add(new Token(TokenType.PLUS, "+", 0));
-                            break;
-                        case '-':
-                            res.Add(new Token(TokenType.MINUS, "-", 0));
-                            break;
-                        case '*':
-                            res.Add(new Token(TokenType.MULTIPLY, "*", 0));
-                            break;
-                        case '/':
-                            res.Add(new Token(TokenType.DIVIDE, "/", 0));
-                            break;
-                        case '^':
-                            res.Add(new Token(TokenType.POWER, "^", 0));
-                            break;
-                        case '(':
-                            res.Add(new Token(TokenType.LPAREN, "(", 0));
-                            break;
-                        case ')':
-                            res.Add(new Token(TokenType.RPAREN, ")", 0));
-                            break;
-                        default:
-                            isSucceed = false;
-                            break;
-                    }
-                }
-
-            }
-
             if ((tempNumber.Length > 0) && (tempNumber[tempNumber.Length - 1] == '.'))
             {
                 isSucceed = false;
@@ -107,10 +19,86 @@ namespace Calculator.Model
 
             if (tempNumber.Length > 0)
             {
-                res.Add(new Token(TokenType.NUBMER, tempNumber, float.Parse(tempNumber, CultureInfo.InvariantCulture)));
+                tokens.Add(new Token(TokenType.NUMBER, tempNumber, float.Parse(tempNumber, CultureInfo.InvariantCulture)));
                 tempNumber = "";
                 isPointUsed = false;
             }
+        }
+
+        private static void HandleOperator(ref List<Token> tokens, char s, ref bool isSucceed)
+        {
+            switch (s)
+            {
+                case '+':
+                    tokens.Add(new Token(TokenType.PLUS, "+", 0));
+                    break;
+                case '-':
+                    tokens.Add(new Token(TokenType.MINUS, "-", 0));
+                    break;
+                case '*':
+                    tokens.Add(new Token(TokenType.MULTIPLY, "*", 0));
+                    break;
+                case '/':
+                    tokens.Add(new Token(TokenType.DIVIDE, "/", 0));
+                    break;
+                case '^':
+                    tokens.Add(new Token(TokenType.POWER, "^", 0));
+                    break;
+                case '(':
+                    tokens.Add(new Token(TokenType.LPAREN, "(", 0));
+                    break;
+                case ')':
+                    tokens.Add(new Token(TokenType.RPAREN, ")", 0));
+                    break;
+                default:
+                    isSucceed = false;
+                    break;
+            }
+        }
+
+        private static void HandleNumber(ref List<Token> tokens, char s, ref string tempNumber, ref bool isPointUsed, ref bool isSucceed)
+        {
+            if (s == '.')
+            {
+                if ((!isPointUsed) && (tempNumber.Length > 0))
+                {
+                    tempNumber += s;
+                    isPointUsed = true;
+                }
+                else
+                {
+                    isSucceed = false;
+                }
+            }
+            else
+            {
+                tempNumber += s;
+            }
+        }
+
+        public static List<Token> ConvertStringToTokens(string str)
+        {
+            List<Token> res = new List<Token>();
+            bool isSucceed = true;
+            string tempNumber = "";
+            bool isPointUsed = false;
+
+            str = str.Replace(" ", "");
+
+            foreach (char s in str)
+            {
+                if ( (char.IsDigit(s)) || (s == '.'))
+                {
+                    HandleNumber(ref res,s,ref tempNumber, ref isPointUsed, ref isSucceed);
+                }
+                else
+                {
+                    FinishNumber(ref res,ref tempNumber, ref isPointUsed, ref isSucceed);
+                    HandleOperator(ref res, s, ref isSucceed);
+                }
+            }
+
+            FinishNumber(ref res, ref tempNumber, ref isPointUsed, ref isSucceed);
 
             if (!isSucceed)
             {

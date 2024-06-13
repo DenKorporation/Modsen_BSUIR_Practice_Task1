@@ -1,56 +1,25 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Calculator.Model.Enums;
 
 namespace Calculator.Model
 {
-    public enum TokenType 
+    public class Token
     {
-        NUBMER,
-        PLUS,
-        MINUS,
-        MULTIPLY,
-        DIVIDE,
-        POWER,
-        LPAREN,
-        RPAREN,
-        EOF,
-        ILLEGAL
-    }
-
-    internal class Token
-    {
-        TokenType type;
-        string strValue;
-        double value;
-
-        public TokenType Type
-        {
-            get { return type; }
-        }
-
-        public string StringValue
-        {
-            get { return strValue; }
-        }
-
-        public double NumericValue
-        {
-            get { return value; }
-        }
+        public TokenType TokenType { get; set; }
+        public string Literal { get; set; }
+        public double NumericValue { get; set; }
 
         public Token()
         {
-            type = TokenType.EOF;
+            TokenType = TokenType.EOF;
+            Literal = "";
+            NumericValue = 0;
         }
 
         public Token(TokenType Type, string StrValue, double Value)
         {
-            type = Type; 
-            strValue = StrValue;
-            value = Value;
+            TokenType = Type; 
+            Literal = StrValue;
+            NumericValue = Value;
         }
 
     }

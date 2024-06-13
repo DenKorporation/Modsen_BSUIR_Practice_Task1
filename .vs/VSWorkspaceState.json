@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\src",
+    "\\src\\Calculator",
+    "\\src\\Calculator\\Model"
   ],
-  "SelectedNode": "\\C:\\Users\\Егор\\Source\\Repos\\Modsen_BSUIR_Practice_Task1",
+  "SelectedNode": "\\Modsen_BSUIR_Practice_Task1.sln",
   "PreviewInSolutionExplorer": false
 }

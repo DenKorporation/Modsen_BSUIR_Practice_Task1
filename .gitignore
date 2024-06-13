@@ -1,4 +1,5 @@
 bin/
 obj/
 .idea/
+.vs
 src/Calculator/Calculator.csproj.user
