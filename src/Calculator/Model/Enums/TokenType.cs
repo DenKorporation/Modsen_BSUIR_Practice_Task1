@@ -4,19 +4,18 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Calculator.Model.Enums
+namespace Calculator.Model.Enums;
+
+public enum TokenType
 {
-    public enum TokenType
-    {
-        NUMBER,
-        PLUS,
-        MINUS,
-        MULTIPLY,
-        DIVIDE,
-        POWER,
-        LPAREN,
-        RPAREN,
-        EOF,
-        ILLEGAL
-    }
+    NUMBER,
+    PLUS,
+    MINUS,
+    MULTIPLY,
+    DIVIDE,
+    LPAREN,
+    RPAREN,
+    EOF,
+    ILLEGAL,
+    POWER
 }
