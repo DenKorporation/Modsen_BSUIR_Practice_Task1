@@ -1,55 +1,57 @@
-﻿namespace Calculator.Model
+﻿namespace Calculator.Model;
+
+public static class VariableSolver
 {
-    public static class VariableSolver
+    private static char[] delimiters = new[] { '+', '-', '*', '/', '(', ')', '^', ' ' };
+
+    private static bool ChekVarIsSuit(string str, string variable, int startIndex)
     {
-        private static char[] delimiters = new[] { '+', '-', '*', '/', '(', ')', '^' };
+        bool res;
+        int nextCharIndex = startIndex + variable.Length;
 
-        private static bool ChekVarIsSuit(string str, string variable, int startIndex)
+        if ((nextCharIndex == str.Length) || ((nextCharIndex < str.Length) && (delimiters.Contains(str[nextCharIndex]))))
         {
-            bool res;
-            int nextCharIndex = startIndex + variable.Length;
-
-            if ((nextCharIndex < str.Length) && (delimiters.Contains(str[nextCharIndex])))
-            {
-                res = true;
-            }
-            else
-            {
-                res = false;
-            }
-            return res;
+            res = true;
         }
-
-        public static string VariableReplace(string str, List<Variable> variables)
+        else
         {
-            string res = str;
+            res = false;
+        }
+        return res;
+    }
 
-            foreach (Variable variable in variables)
+    public static string VariableReplace(string str, List<Variable> variables)
+    {
+        string res = str;
+
+        foreach (Variable v in variables)
+        {
+            int currentPos = 0;
+            int tempPos;
+            bool isEnd = false;
+
+            while (!isEnd)
             {
-                int currentPos = 0;
-                int tempPos;
-                bool isEnd = false;
+                tempPos = res.IndexOf(v.Name, currentPos);
 
-                while (!isEnd)
+                if (tempPos != -1)
                 {
-                    tempPos = res.IndexOf(variable.Name, currentPos);
+                    if (ChekVarIsSuit(res, v.Name, tempPos))
+                    {
+                        res = res.Substring(0, tempPos) + v.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)
+                            + res.Substring(tempPos + v.Name.Length);
+                    }
 
-                    if (tempPos != -1)
-                    {
-                        if (ChekVarIsSuit(res, variable.Name, tempPos))
-                        {
-                            res = res.Substring(0, tempPos) + variable.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)
-                                + res.Substring(tempPos + variable.Name.Length);
-                        }
-                        currentPos = tempPos + 1;
-                    }
-                    else
-                    {
-                        isEnd = true;
-                    }
+                    currentPos = tempPos + 1;
                 }
+                else
+                {
+                    isEnd = true;
+                }
+
             }
-            return res;
         }
+
+        return res;
     }
 }
