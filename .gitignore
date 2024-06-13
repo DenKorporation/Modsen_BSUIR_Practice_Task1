@@ -3,3 +3,4 @@ obj/
 .idea/
 src/Calculator/Calculator.csproj.user
 *.DotSettings.user
+.vs/

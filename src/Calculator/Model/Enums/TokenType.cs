@@ -10,5 +10,6 @@ public enum TokenType
     LPAREN,
     RPAREN,
     EOF,
-    ILLEGAL
+    ILLEGAL,
+    POWER
 }
