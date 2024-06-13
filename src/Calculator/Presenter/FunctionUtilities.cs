@@ -78,7 +78,7 @@ public static class FunctionUtilities
                 replacedBody = replacedBody.Replace(function.Parameters[i], args[i]);
             }
 
-            return replacedBody;
+            return $"({replacedBody})";
         });
     }
 }
