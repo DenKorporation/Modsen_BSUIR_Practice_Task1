@@ -8,14 +8,15 @@ public static class VariableSolver
     {
         bool res;
         int nextCharIndex = startIndex + variable.Length;
-
-        res = ( (nextCharIndex == str.Length) || ( (nextCharIndex < str.Length) && (delimiters.Contains(str[nextCharIndex])) ) );
+        int prevCharIndex = startIndex - 1;
+        res = ((nextCharIndex == str.Length) || ((nextCharIndex < str.Length) && (delimiters.Contains(str[nextCharIndex]))))
+            && ((prevCharIndex == -1) || (delimiters.Contains(str[prevCharIndex])));
         return res;
     }
 
     public static string VariableReplace(string str, List<Variable> variables)
     {
-        string res = str.Replace(" ","");
+        string res = str.Replace(" ", "");
 
         foreach (Variable v in variables)
         {
@@ -47,4 +48,5 @@ public static class VariableSolver
 
         return res;
     }
+
 }
