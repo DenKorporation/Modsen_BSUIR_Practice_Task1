@@ -9,20 +9,13 @@ public static class VariableSolver
         bool res;
         int nextCharIndex = startIndex + variable.Length;
 
-        if ((nextCharIndex == str.Length) || ((nextCharIndex < str.Length) && (delimiters.Contains(str[nextCharIndex]))))
-        {
-            res = true;
-        }
-        else
-        {
-            res = false;
-        }
+        res = ( (nextCharIndex == str.Length) || ( (nextCharIndex < str.Length) && (delimiters.Contains(str[nextCharIndex])) ) );
         return res;
     }
 
     public static string VariableReplace(string str, List<Variable> variables)
     {
-        string res = str;
+        string res = str.Replace(" ","");
 
         foreach (Variable v in variables)
         {
