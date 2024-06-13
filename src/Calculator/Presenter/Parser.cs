@@ -51,10 +51,7 @@ public static class Parser
             }
         }
 
-        while (operatorStack.Count > 0)
-        {
-            output.Add(operatorStack.Pop());
-        }
+        output.AddRange(operatorStack);
 
         return output;
     }
