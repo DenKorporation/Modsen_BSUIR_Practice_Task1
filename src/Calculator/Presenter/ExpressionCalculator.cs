@@ -36,7 +36,7 @@ public static class ExpressionCalculator
             }
             else
             {
-                HandleOperator(in token, ref valueStack);
+                HandleOperator(in token, valueStack);
             }
         }
 
@@ -55,7 +55,7 @@ public static class ExpressionCalculator
     /// <param name="valueStack">The stack of values to which the operator will be applied.</param>
     /// <exception cref="InvalidOperationException">Thrown when there are fewer than 2 operands on the stack.</exception>
     /// <exception cref="DivideByZeroException">Thrown when attempting to divide by zero.</exception>
-    private static void HandleOperator(in Token token, ref Stack<double> valueStack)
+    private static void HandleOperator(in Token token, Stack<double> valueStack)
     {
         if (valueStack.Count < 2)
         {
