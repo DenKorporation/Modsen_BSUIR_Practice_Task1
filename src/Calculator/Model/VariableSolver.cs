@@ -4,25 +4,25 @@ public static class VariableSolver
 {
     private static char[] delimiters = new[] { '+', '-', '*', '/', '(', ')', '^', ' ' };
 
-    private static bool ChekVarIsSuit(string str, string variable, int startIndex)
+    private static bool CheсkVariableIsSuit(string expression, string variable, int startIndex)
     {
-        bool res;
-        int nextCharIndex = startIndex + variable.Length;
-        int prevCharIndex = startIndex - 1;
-        res = ((nextCharIndex == str.Length) || ((nextCharIndex < str.Length) && (delimiters.Contains(str[nextCharIndex]))))
-            && ((prevCharIndex == -1) || (delimiters.Contains(str[prevCharIndex])));
+        var res = true;
+        var nextCharIndex = startIndex + variable.Length;
+        var prevCharIndex = startIndex - 1;
+        res = ((nextCharIndex == expression.Length) || ((nextCharIndex < expression.Length) && (delimiters.Contains(expression[nextCharIndex]))))
+            && ((prevCharIndex == -1) || (delimiters.Contains(expression[prevCharIndex])));
         return res;
     }
 
-    public static string VariableReplace(string str, List<Variable> variables)
+    public static string VariableReplace(string expression, List<Variable> variables)
     {
-        string res = str.Replace(" ", "");
+        string res = expression.Replace(" ", "");
 
         foreach (Variable v in variables)
         {
-            int currentPos = 0;
-            int tempPos;
-            bool isEnd = false;
+            var currentPos = 0;
+            var tempPos = 0;
+            var isEnd = false;
 
             while (!isEnd)
             {
@@ -30,7 +30,7 @@ public static class VariableSolver
 
                 if (tempPos != -1)
                 {
-                    if (ChekVarIsSuit(res, v.Name, tempPos))
+                    if (CheсkVariableIsSuit(res, v.Name, tempPos))
                     {
                         res = res.Substring(0, tempPos) + v.Value.ToString(System.Globalization.CultureInfo.InvariantCulture)
                             + res.Substring(tempPos + v.Name.Length);
