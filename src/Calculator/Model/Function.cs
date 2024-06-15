@@ -12,4 +12,9 @@ public class Function
         Parameters = parameters;
         Body = body;
     }
+
+    public override string ToString()
+    {
+        return $"{Name}({string.Join(',', Parameters)})={Body}";
+    }
 }

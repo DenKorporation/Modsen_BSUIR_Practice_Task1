@@ -1,4 +1,8 @@
-﻿using System.Windows.Forms.VisualStyles;
+﻿using System.Globalization;
+using System.Windows.Forms.VisualStyles;
+using Calculator.Model;
+using Calculator.Presenter;
+using Calculator.View;
 
 namespace Calculator.Controls;
 
@@ -8,6 +12,10 @@ public class FunctionControls
     private Button _defineFunctionButton;
     private Button _selectFunctionButton;
     private ComboBox _selectFunctionComboBox;
+
+    private Dictionary<string, Function> _functions = new();
+
+    public Dictionary<string, Function> Functions => _functions;
     
     public FunctionControls(TextBox inputField,int buttonHeight,int buttonWidth)
         {
@@ -55,7 +63,21 @@ public class FunctionControls
         }
         private void DefineFunctionButton_Click(object sender, EventArgs e)
         {
-            
+            var expression = InputBox.ShowDialog("Format: f(x,y)=x+y", "Input function");
+
+            if (expression is not null)
+            {
+                try
+                {
+                    var function = FunctionUtilities.ParseFunction(expression);
+                    _functions.Add(function.Name, function);
+                    _selectFunctionComboBox.Items.Add(function);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                }
+            }
         }
         
         private void SelectFunctionButton_Click(object sender, EventArgs e)
@@ -66,11 +88,33 @@ public class FunctionControls
         private void SelectFunctionComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            string selectedFunction = comboBox.SelectedItem.ToString();
-            // Добавляем выбранную функцию в поле ввода или выполняем другие действия по выбору
-            _inputField.Text += selectedFunction;
+            if (comboBox.SelectedItem is Function function)
+            {
+                
+                List<string> parameterValues = new();
+                foreach (var parameter in function.Parameters)
+                {
+                    parameterValues.Add(InputParameter(parameter).ToString());
+                }
+
+                var functionCall = $"{function.Name}({string.Join(',', parameterValues)})";
+                _inputField.Text += functionCall;
+            }
 
             // Скрываем ComboBox после выбора элемента
             _selectFunctionComboBox.Visible = false;
+        }
+
+        private int InputParameter(string parameterName)
+        {
+            string? input = null;
+            int value;
+
+            while (string.IsNullOrEmpty(input) || !int.TryParse(input, out value))
+            {
+                input = InputBox.ShowDialog($"Input {parameterName}", "Input parameter");
+            }
+
+            return value;
         }
 }

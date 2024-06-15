@@ -1,4 +1,6 @@
-﻿namespace Calculator.Model;
+﻿using System.Text.RegularExpressions;
+
+namespace Calculator.Model;
 
 public static class VariableSolver
 {
@@ -49,4 +51,18 @@ public static class VariableSolver
         return res;
     }
 
+    public static Variable ParseVariable(string expression)
+    {
+        var pattern = @"^\s*(\w+)\s*=\s*(\d+\.?\d*)\s*$";
+
+        var match = Regex.Match(expression, pattern);
+
+        if (!match.Success)
+            throw new ArgumentException("Incorrect variable declaration");
+
+        var variableName = match.Groups[1].Value;
+        var variableValue = double.Parse(match.Groups[2].Value);
+
+        return new Variable(variableName, variableValue);
+    }
 }

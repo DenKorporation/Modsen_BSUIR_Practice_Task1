@@ -1,4 +1,7 @@
-﻿namespace Calculator.Controls;
+﻿using Calculator.Model;
+using Calculator.View;
+
+namespace Calculator.Controls;
 
 public class VariableControls
     {
@@ -7,7 +10,10 @@ public class VariableControls
         private Button _selectVariableButton;
         private ComboBox _selectVariableComboBox;
 
-        
+        public Dictionary<string, Variable> _variables = new();
+
+        public List<Variable> Variables => _variables.Values.ToList();
+
         public VariableControls(TextBox inputField,int height,int width)
         {
             _inputField = inputField;
@@ -55,16 +61,29 @@ public class VariableControls
 
         private void DefineVariableButton_Click(object sender, EventArgs e)
         {
-            
+            var expression = InputBox.ShowDialog("Format: x=10", "Input variable");
+
+            if (expression is not null)
+            {
+                try
+                {
+                    var variable = VariableSolver.ParseVariable(expression);
+                    _variables.Add(variable.Name, variable);
+                    _selectVariableComboBox.Items.Add(variable);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show($"Error: {ex.Message}");
+                }
+            }
         }
 
         private void SelectVariableComboBox_SelectedIndexChanged(object sender, EventArgs e)
         {
             ComboBox comboBox = (ComboBox)sender;
-            string selectedVariable = comboBox.SelectedItem?.ToString();
-            if (!string.IsNullOrEmpty(selectedVariable))
+            if (comboBox.SelectedItem is Variable variable)
             {
-                _inputField.Text += selectedVariable;
+                _inputField.Text += variable.Name;
             }
 
             _selectVariableComboBox.Visible = false;

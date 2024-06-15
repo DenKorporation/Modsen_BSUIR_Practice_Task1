@@ -1,4 +1,8 @@
+using System.Globalization;
 using Calculator.Controls;
+using Calculator.Model;
+using Calculator.Presenter;
+
 namespace Calculator.View;
 
 public partial class CalculatorForm : Form
@@ -10,6 +14,7 @@ public partial class CalculatorForm : Form
     private FunctionControls _functionControls;
     private Button _calculateButton;
     private Button _resetButton;
+    
     public CalculatorForm()
     {
         int windowWidth = 300;
@@ -71,6 +76,20 @@ public partial class CalculatorForm : Form
     private void CalculateButton_Click(object sender, EventArgs e)
     {
         // Логика вычисления выражения
+        var variables = _variableControls.Variables;
+        var functions = _functionControls.Functions;
+        
+        var expression = _inputField.Text;
+        expression = FunctionUtilities.ReplaceFunctionCalls(expression, functions);
+        expression = VariableSolver.VariableReplace(expression, variables);
+        
+        var tokens = Tokenizer.ConvertStringToTokens(expression);
+        
+        var reversePolishNotation = Parser.Parse(tokens);
+        
+        var result = ExpressionCalculator.Calculate(reversePolishNotation);
+        
+        _inputField.Text = result.ToString(CultureInfo.InvariantCulture);
     }
 
     // Обработчик для кнопки сброса выражения
