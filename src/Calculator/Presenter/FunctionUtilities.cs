@@ -9,13 +9,13 @@ public static class FunctionUtilities
     
     public static bool IsCorrectFunctionDeclaration(string expression)
     {
-        Match match = Regex.Match(expression, _functionDeclarationPattern);
+        var match = Regex.Match(expression, _functionDeclarationPattern);
 
         if (match.Success)
         {
-            string body = match.Groups[3].Value;
+            var body = match.Groups[3].Value;
         
-            string parameters = match.Groups[2].Value;
+            var parameters = match.Groups[2].Value;
             List<string> parametersList = new(parameters.Split(','));
 
             foreach (var parameter in parametersList)
@@ -42,14 +42,14 @@ public static class FunctionUtilities
         if (!IsCorrectFunctionDeclaration(expression))
             throw new ArgumentException("Incorrect function declaration");
 
-        Match match = Regex.Match(expression, _functionDeclarationPattern);
+        var match = Regex.Match(expression, _functionDeclarationPattern);
 
-        string functionName = match.Groups[1].Value;
+        var functionName = match.Groups[1].Value;
         
-        string parameters = match.Groups[2].Value;
+        var parameters = match.Groups[2].Value;
         List<string> parametersList = new(parameters.Split(','));
 
-        string body = match.Groups[3].Value;
+        var body = match.Groups[3].Value;
 
         return new Function(functionName, parametersList, body);
     }
@@ -58,24 +58,26 @@ public static class FunctionUtilities
     {
         expression = expression.Replace(" ", "");
         
-        string pattern = @"\b(\w+)\(([^)]*)\)";
+        var pattern = @"\b(\w+)\(([^)]*)\)";
         return Regex.Replace(expression, pattern, match =>
         {
-            string functionName = match.Groups[1].Value;
-            string[] args = match.Groups[2].Value.Split(',');
+            var functionName = match.Groups[1].Value;
+            var args = match.Groups[2].Value.Split(',');
 
             if (!functions.ContainsKey(functionName))
                 throw new ArgumentException($"Function '{functionName}' is not defined");
 
-            Function function = functions[functionName];
+            var function = functions[functionName];
 
             if (args.Length != function.Parameters.Count)
                 throw new ArgumentException($"Argument count of '{functionName}' doesn't match");
 
-            string replacedBody = function.Body;
-            for (int i = 0; i < args.Length; i++)
+            var replacedBody = function.Body;
+            var substitutions = function.Parameters
+                .Zip(args, (from, to) => new { From = from, To = to });
+            foreach (var s in substitutions)
             {
-                replacedBody = replacedBody.Replace(function.Parameters[i], args[i]);
+                replacedBody = replacedBody.Replace(s.From, s.To);
             }
 
             return $"({replacedBody})";
