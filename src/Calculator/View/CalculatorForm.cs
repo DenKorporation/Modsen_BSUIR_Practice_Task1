@@ -78,18 +78,26 @@ public partial class CalculatorForm : Form
         // Логика вычисления выражения
         var variables = _variableControls.Variables;
         var functions = _functionControls.Functions;
+
+        try
+        {
+            var expression = _inputField.Text;
+            expression = FunctionUtilities.ReplaceFunctionCalls(expression, functions);
+            expression = VariableSolver.VariableReplace(expression, variables);
         
-        var expression = _inputField.Text;
-        expression = FunctionUtilities.ReplaceFunctionCalls(expression, functions);
-        expression = VariableSolver.VariableReplace(expression, variables);
+            var tokens = Tokenizer.ConvertStringToTokens(expression);
         
-        var tokens = Tokenizer.ConvertStringToTokens(expression);
+            var reversePolishNotation = Parser.Parse(tokens);
         
-        var reversePolishNotation = Parser.Parse(tokens);
-        
-        var result = ExpressionCalculator.Calculate(reversePolishNotation);
-        
-        _inputField.Text = result.ToString(CultureInfo.InvariantCulture);
+            var result = ExpressionCalculator.Calculate(reversePolishNotation);
+            
+            _inputField.Text = result.ToString(CultureInfo.InvariantCulture);
+
+        }
+        catch (Exception ex)
+        {
+            MessageBox.Show($"Error: {ex.Message}");
+        }
     }
 
     // Обработчик для кнопки сброса выражения
